@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check src tests
+
+      - name: Type check
+        run: mypy src/starradar
+
+      - name: Tests
+        run: pytest -q
+
+      # El servidor MCP se prueba como proceso real: si `mcp` no arranca y
+      # habla JSON-RPC, ningún test unitario lo detecta.
+      - name: MCP handshake (smoke)
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            | starradar mcp \
+            | tee /tmp/out.jsonl
+          grep -q '"serverInfo"' /tmp/out.jsonl
+          grep -q 'radar_scan'      /tmp/out.jsonl
