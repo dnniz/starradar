@@ -95,6 +95,7 @@ El detalle completo, con la justificación empírica de cada umbral, está en
 | [`docs/github-api.md`](github-api.md) | Hechos verificados sobre la API de GitHub (sus trampas). |
 | [`docs/integration.md`](integration.md) | Hermes, MCP, cron, Atlas: cómo encaja con el resto. |
 | [`docs/operations.md`](operations.md) | Operación diaria, calibración, qué hacer si el ranking va mal. |
+| [`docs/credentials.md`](credentials.md) | Credenciales de GitHub, por qué el PAT clásico y no el fine-grained. |
 | [`docs/adr/`](adr/) | Decisiones con contexto, alternativas y consecuencias. |
 
 ---
